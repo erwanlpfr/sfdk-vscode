@@ -30,6 +30,12 @@
   "contributes": {
     "commands": [
       {
+        "command": "sfdk.init",
+        "title": "Initialize Project",
+        "category": "SFDK",
+        "icon": "$(wand)"
+      },
+      {
         "command": "sfdk.build",
         "title": "Build",
         "category": "SFDK",

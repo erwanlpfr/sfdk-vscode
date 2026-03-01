@@ -3,7 +3,7 @@
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
 [![VS Code](https://img.shields.io/badge/VS%20Code-%5E1.85.0-007ACC.svg)](https://code.visualstudio.com/)
 
-Build, deploy, and manage [Sailfish OS](https://sailfishos.org/) applications directly from VS Code using the [sfdk](https://docs.sailfishos.org/Tools/Sailfish_SDK/sfdk/) CLI tool.
+Build, deploy, and manage [Sailfish OS](https://sailfishos.org/) applications directly from VS Code using the [sfdk](https://docs.sailfishos.org/Tools/Platform_SDK/) CLI tool.
 
 ![Sailfish SDK Explorer](https://img.shields.io/badge/status-beta-orange)
 
@@ -15,6 +15,8 @@ Build, deploy, and manage [Sailfish OS](https://sailfishos.org/) applications di
 - **Build Engine Control** — Start, stop, and monitor the build engine from the status bar
 - **Emulator Control** — Start and stop emulators from the device tree context menu
 - **RPM Packaging** — Create RPM packages and run quality checks
+- **Project Init** — Generate `.clangd` and `.vscode/settings.json` for C++ IntelliSense
+- **QML Live** — Toggle QML Live mode and run apps with live-reload on device
 - **Task Integration** — Use sfdk commands as VS Code tasks in `tasks.json`
 - **Terminal Output** — All command output streams to a dedicated "Sailfish SDK" terminal
 
@@ -57,7 +59,7 @@ Right-click items for context actions like deploy, set active device/target, or 
 
 ### Status Bar
 
-Four status bar items appear on the left:
+Five status bar items appear on the left:
 
 | Icon | Purpose |
 | ---- | ------- |
@@ -65,6 +67,7 @@ Four status bar items appear on the left:
 | `$(vm)` | Build engine status (click to toggle) |
 | `$(package)` | Active build target (click to change) |
 | `$(device-mobile)` | Active device (click to change) |
+| `$(zap)` / `$(circle-slash)` | QML Live toggle (click to enable/disable) |
 
 Items turn yellow when attention is needed (engine stopped, no target/device selected).
 
@@ -87,6 +90,27 @@ Open the Command Palette (`Ctrl+Shift+P`) and type `SFDK` to see all available c
 | `SFDK: Start/Stop Build Engine` | Toggle the build engine |
 | `SFDK: Start Emulator` | Start an emulator |
 | `SFDK: Stop Emulator` | Stop an emulator |
+| `SFDK: Initialize Project` | Generate `.clangd` and `.vscode/settings.json` |
+| `SFDK: Toggle QML Live` | Enable/disable QML Live mode |
+| `SFDK: Run with QML Live` | Launch app on device with QML Live |
+
+### Initialize Project
+
+Run `SFDK: Initialize Project` from the Command Palette to generate editor configuration for C++ IntelliSense in your Sailfish OS project:
+
+- **`.clangd`** — clangd compile flags targeting the active build target's sysroot, with GCC and Qt 5 include paths auto-discovered
+- **`.vscode/settings.json`** — file associations (`.qml`, `.pro`, `.spec`) and exclusions for generated files (`moc_*.cpp`, `*.o`)
+
+The command reads the active build target from `.sfdk/target` (or prompts you to pick one) and scans the SDK sysroot at `~/SailfishOS/mersdk/targets/`.
+
+### QML Live
+
+[QML Live](https://docs.sailfishos.org/Develop/Apps/Tutorials/QML_Live_Coding_With_Qt_QmlLive/) lets you see QML changes on the device in real-time without rebuilding.
+
+1. Set `sfdk.qmlLive.appBinary` to the path of your app binary on the device (e.g. `/usr/bin/harbour-myapp`)
+2. Optionally set `sfdk.qmlLive.workspacePath` to limit live-reload to a subdirectory (e.g. `qml`)
+3. Click the **QML Live** status bar item to enable the toggle
+4. Run `SFDK: Run with QML Live` to launch the app wrapped with `qmlliveruntime-sailfish`
 
 ### Tasks
 
@@ -119,6 +143,8 @@ You can use sfdk commands as VS Code tasks. Add to your `.vscode/tasks.json`:
 | `sfdk.path` | `""` | Absolute path to the `sfdk` binary. Leave empty to auto-detect from PATH. |
 | `sfdk.deployMethod` | `--sdk` | Default deployment method (`--sdk`, `--pkcon`, `--rsync`, `--zypper`, `--manual`) |
 | `sfdk.autoBuildBeforeDeploy` | `true` | Automatically run build before deploying |
+| `sfdk.qmlLive.appBinary` | `""` | Path to the app binary on the device (e.g. `/usr/bin/harbour-myapp`) |
+| `sfdk.qmlLive.workspacePath` | `""` | Restrict QML Live to a subdirectory (e.g. `qml`) |
 
 ## Project Structure
 
@@ -127,7 +153,9 @@ src/
 ├── core/                  # Pure business logic (no VS Code dependency)
 │   ├── types.ts           # TypeScript interfaces
 │   ├── client.ts          # sfdk CLI process wrapper
+│   ├── constants.ts       # Shared constants
 │   ├── parsers.ts         # Output parsers for device/target lists
+│   ├── templates.ts       # .clangd and .vscode/settings.json generators
 │   └── commands/          # Command implementations
 ├── vscode/                # VS Code integration layer
 │   ├── extension.ts       # Activation & setup
@@ -135,7 +163,8 @@ src/
 │   ├── deviceTree.ts      # Device tree view provider
 │   ├── targetTree.ts      # Target tree view provider
 │   ├── statusBar.ts       # Status bar items
-│   └── taskProvider.ts    # Task provider
+│   ├── taskProvider.ts    # Task provider
+│   └── initProject.ts    # Initialize Project command
 └── test/                  # Unit tests
 ```
 
@@ -155,6 +184,9 @@ bun run watch
 
 # Run tests
 bun test
+
+# Lint
+bun run lint
 
 # Package as VSIX
 bunx @vscode/vsce package --no-dependencies
