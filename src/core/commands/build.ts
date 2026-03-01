@@ -1,5 +1,6 @@
 import type { SfdkCommand } from "../types";
 
+/** Create a command that runs `sfdk <args>` with progress and optional cancellation. */
 function createRunCommand(
   id: string,
   title: string,

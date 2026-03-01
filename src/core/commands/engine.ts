@@ -1,5 +1,6 @@
 import type { SfdkClient, SfdkCommand, SfdkResult } from "../types";
 
+/** Create an engine start/stop command. */
 function createEngineCommand(
   id: string,
   title: string,

@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import type { SfdkClient, SfdkDevice } from "../core/types";
 
+/** Tree item representing a single device or emulator. */
 export class DeviceTreeItem extends vscode.TreeItem {
   constructor(public readonly device: SfdkDevice) {
     super(device.name, vscode.TreeItemCollapsibleState.None);
@@ -28,6 +29,7 @@ export class DeviceTreeItem extends vscode.TreeItem {
   }
 }
 
+/** Tree data provider for connected devices and emulators. */
 export class DeviceTreeProvider
   implements vscode.TreeDataProvider<DeviceTreeItem>
 {

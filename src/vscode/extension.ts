@@ -2,10 +2,12 @@ import * as vscode from "vscode";
 import { SfdkClientImpl } from "../core/client";
 import { registerAllCommands } from "./commandAdapter";
 import { DeviceTreeProvider } from "./deviceTree";
+import { registerInitCommand } from "./initProject";
 import { StatusBar } from "./statusBar";
 import { TargetTreeProvider } from "./targetTree";
 import { SfdkTaskProvider } from "./taskProvider";
 
+/** VS Code extension entry point. */
 export async function activate(
   context: vscode.ExtensionContext,
 ): Promise<void> {
@@ -76,6 +78,9 @@ export async function activate(
     new SfdkTaskProvider(sfdkPath),
   );
 
+  // Register init command (file generation, not sfdk CLI)
+  registerInitCommand(context, client);
+
   // Register all commands via adapter
   registerAllCommands(context, {
     client,
@@ -102,6 +107,4 @@ export async function activate(
   );
 }
 
-export function deactivate(): void {
-  // Cleanup handled by disposables
-}
+export function deactivate(): void {}

@@ -1,5 +1,4 @@
-// ---- Data models ----
-
+/** A connected Sailfish OS device or emulator. */
 export interface SfdkDevice {
   index: number;
   name: string;
@@ -9,27 +8,27 @@ export interface SfdkDevice {
   privateKey: string;
 }
 
+/** An available build target (architecture + SDK version). */
 export interface SfdkTarget {
   name: string;
   flags: string;
 }
 
+/** Result of an sfdk CLI invocation. */
 export interface SfdkResult {
   exitCode: number;
   stdout: string;
   stderr: string;
 }
 
-// ---- Client options ----
-
+/** Options for creating an {@link SfdkClient} instance. */
 export interface SfdkClientOptions {
   sfdkPath: string;
   cwd: string;
   onOutput?: (text: string) => void;
 }
 
-// ---- Command abstractions ----
-
+/** Declarative command definition registered in the command palette. */
 export interface SfdkCommand {
   id: string;
   title: string;
@@ -38,8 +37,10 @@ export interface SfdkCommand {
   execute(ctx: CommandContext): Promise<CommandResult>;
 }
 
+/** UI elements to refresh after a command completes. */
 export type RefreshTarget = "devices" | "targets" | "engine" | "statusBar";
 
+/** Dependencies injected into command handlers at execution time. */
 export interface CommandContext {
   client: SfdkClient;
   pickDevice(): Promise<string | undefined>;
@@ -47,14 +48,14 @@ export interface CommandContext {
   getConfig<T>(key: string, fallback: T): T;
 }
 
+/** Return value from a command's {@link SfdkCommand.execute} method. */
 export interface CommandResult {
   success: boolean;
   message: string;
   refresh?: RefreshTarget[];
 }
 
-// ---- Client interface (for mocking in tests) ----
-
+/** Abstraction over the sfdk CLI for testability. */
 export interface SfdkClient {
   exec(args: string[]): Promise<SfdkResult>;
   run(

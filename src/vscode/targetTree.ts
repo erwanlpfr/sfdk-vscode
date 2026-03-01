@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import type { SfdkClient, SfdkTarget } from "../core/types";
 
+/** Tree item representing a single build target. */
 export class TargetTreeItem extends vscode.TreeItem {
   constructor(public readonly target: SfdkTarget) {
     super(target.name, vscode.TreeItemCollapsibleState.None);
@@ -15,6 +16,7 @@ export class TargetTreeItem extends vscode.TreeItem {
   }
 }
 
+/** Tree data provider for available build targets. */
 export class TargetTreeProvider
   implements vscode.TreeDataProvider<TargetTreeItem>
 {

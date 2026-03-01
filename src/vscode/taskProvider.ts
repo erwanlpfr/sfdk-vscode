@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 
+/** Provides sfdk tasks for the VS Code task runner. */
 export class SfdkTaskProvider implements vscode.TaskProvider {
   static readonly type = "sfdk";
 

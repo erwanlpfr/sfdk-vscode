@@ -9,9 +9,11 @@ import type {
   SfdkTarget,
 } from "./types";
 
+/** Wraps the sfdk CLI binary, spawning child processes for each command. */
 export class SfdkClientImpl implements SfdkClient {
   constructor(private options: SfdkClientOptions) {}
 
+  /** Run an sfdk command silently and return captured output. */
   async exec(args: string[]): Promise<SfdkResult> {
     return new Promise((resolve) => {
       const proc = spawn(this.options.sfdkPath, args, {
@@ -39,6 +41,7 @@ export class SfdkClientImpl implements SfdkClient {
     });
   }
 
+  /** Run an sfdk command, streaming output via the onOutput callback. */
   async run(
     args: string[],
     onCancel?: (kill: () => void) => void,
@@ -153,6 +156,7 @@ export class SfdkClientImpl implements SfdkClient {
     return this.run(args);
   }
 
+  /** Launch QML Live on the active device via `sfdk device exec`. */
   async qmlLiveRun(
     appBinary: string,
     workspacePath?: string,

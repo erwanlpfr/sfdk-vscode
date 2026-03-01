@@ -5,6 +5,7 @@ import type {
   SfdkResult,
 } from "../types";
 
+/** Create an emulator start/stop command. */
 function createEmulatorCommand(
   id: string,
   title: string,

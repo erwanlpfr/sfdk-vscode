@@ -13,6 +13,7 @@ interface AdapterDeps {
   terminal: vscode.Terminal;
 }
 
+/** Register all sfdk commands from the declarative registry. */
 export function registerAllCommands(
   context: vscode.ExtensionContext,
   deps: AdapterDeps,

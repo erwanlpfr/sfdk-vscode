@@ -5,6 +5,7 @@ import {
 } from "../core/constants";
 import type { SfdkClient } from "../core/types";
 
+/** Manages the status bar items (build, engine, target, device, QML Live). */
 export class StatusBar {
   private buildItem: vscode.StatusBarItem;
   private engineItem: vscode.StatusBarItem;
