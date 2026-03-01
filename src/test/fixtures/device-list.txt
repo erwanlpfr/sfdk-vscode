@@ -1,0 +1,6 @@
+#0 "Sailfish OS Emulator 5.0.0.62"
+    emulator         autodetected  defaultuser@127.0.0.1:2223
+    private-key: ~/SailfishOS/vmshare/ssh/private_keys/sdk
+#1 "Xperia 10 II - Dual SIM (ARM 64bit)"
+    hardware-device  user-defined  defaultuser@192.168.2.15:22
+    private-key: ~/.ssh/qtc_id
