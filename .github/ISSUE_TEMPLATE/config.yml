@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Sailfish OS Documentation
+    url: https://docs.sailfishos.org/
+    about: Official Sailfish OS documentation and SDK guides
