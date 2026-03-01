@@ -5,3 +5,7 @@ tsconfig.json
 **/*.map
 *.vsix
 .gitignore
+.github/
+CONTRIBUTING.md
+biome.json
+bun.lock
