@@ -1,0 +1,13 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "shell",
+      "label": "bun: compile",
+      "command": "bun",
+      "args": ["run", "compile"],
+      "group": "build",
+      "problemMatcher": ["$tsc"]
+    }
+  ]
+}

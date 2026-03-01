@@ -1,0 +1,191 @@
+{
+  "name": "sfdk-vscode",
+  "displayName": "Sailfish OS SDK (sfdk)",
+  "description": "Build, deploy, and manage Sailfish OS applications using the sfdk CLI tool",
+  "version": "0.1.0",
+  "publisher": "erwanlpfr",
+  "license": "GPL-3.0",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "sailfish",
+    "sfdk",
+    "jolla",
+    "rpm",
+    "qml"
+  ],
+  "icon": "resources/sailfish.png",
+  "activationEvents": [
+    "workspaceContains:**/.sfdk/**",
+    "workspaceContains:**/*.pro"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "sfdk.build",
+        "title": "SFDK: Build",
+        "icon": "$(play)"
+      },
+      {
+        "command": "sfdk.deploy",
+        "title": "SFDK: Deploy to Device",
+        "icon": "$(rocket)"
+      },
+      {
+        "command": "sfdk.listDevices",
+        "title": "SFDK: Refresh Devices",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "sfdk.setTarget",
+        "title": "SFDK: Set Build Target"
+      },
+      {
+        "command": "sfdk.setDevice",
+        "title": "SFDK: Set Device"
+      },
+      {
+        "command": "sfdk.check",
+        "title": "SFDK: Check RPM Quality"
+      },
+      {
+        "command": "sfdk.qmake",
+        "title": "SFDK: Run qmake"
+      },
+      {
+        "command": "sfdk.make",
+        "title": "SFDK: Run make"
+      },
+      {
+        "command": "sfdk.package",
+        "title": "SFDK: Create RPM Package"
+      },
+      {
+        "command": "sfdk.refreshTargets",
+        "title": "SFDK: Refresh Build Targets",
+        "icon": "$(refresh)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "sfdk-explorer",
+          "title": "Sailfish SDK",
+          "icon": "resources/sailfish.svg"
+        }
+      ]
+    },
+    "views": {
+      "sfdk-explorer": [
+        {
+          "id": "sfdk-devices",
+          "name": "Devices"
+        },
+        {
+          "id": "sfdk-targets",
+          "name": "Build Targets"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "sfdk.listDevices",
+          "when": "view == sfdk-devices",
+          "group": "navigation"
+        },
+        {
+          "command": "sfdk.refreshTargets",
+          "when": "view == sfdk-targets",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "sfdk.deploy",
+          "when": "view == sfdk-devices && viewItem == device",
+          "group": "inline"
+        },
+        {
+          "command": "sfdk.setDevice",
+          "when": "view == sfdk-devices && viewItem == device"
+        },
+        {
+          "command": "sfdk.setTarget",
+          "when": "view == sfdk-targets && viewItem == target"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Sailfish SDK (sfdk)",
+      "properties": {
+        "sfdk.path": {
+          "type": "string",
+          "default": "",
+          "description": "Absolute path to the sfdk binary. Leave empty to use sfdk from PATH."
+        },
+        "sfdk.deployMethod": {
+          "type": "string",
+          "default": "--sdk",
+          "enum": [
+            "--sdk",
+            "--pkcon",
+            "--rsync",
+            "--zypper",
+            "--manual"
+          ],
+          "enumDescriptions": [
+            "SDK native method (requires developer mode)",
+            "Use pkcon to install RPM packages",
+            "Transfer buildroot via rsync (no RPM)",
+            "Use zypper to install RPM packages (requires root)",
+            "Transfer RPMs to ~/RPMS for manual installation"
+          ],
+          "description": "Default deployment method for 'sfdk deploy'."
+        },
+        "sfdk.autoBuildBeforeDeploy": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically run 'sfdk build' before deploying."
+        }
+      }
+    },
+    "taskDefinitions": [
+      {
+        "type": "sfdk",
+        "required": [
+          "command"
+        ],
+        "properties": {
+          "command": {
+            "type": "string",
+            "description": "The sfdk command to run (build, deploy, qmake, make, package, check)"
+          },
+          "args": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Additional arguments to pass to sfdk"
+          }
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "bun run package",
+    "compile": "bun build src/extension.ts --outdir=dist --target=node --format=cjs --external=vscode",
+    "watch": "bun build src/extension.ts --outdir=dist --target=node --format=cjs --external=vscode --watch",
+    "package": "bun build src/extension.ts --outdir=dist --target=node --format=cjs --external=vscode --minify"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.4.0"
+  }
+}
