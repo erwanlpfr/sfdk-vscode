@@ -3,9 +3,11 @@ import * as vscode from "vscode";
 export class SfdkTaskProvider implements vscode.TaskProvider {
   static readonly type = "sfdk";
 
+  constructor(private sfdkPath: string) {}
+
   provideTasks(): vscode.Task[] {
     return [
-      this.createTask("build", "Build", ["build"]),
+      this.createTask("build", "Build", ["build"], vscode.TaskGroup.Build),
       this.createTask("qmake", "Run qmake", ["qmake", "."]),
       this.createTask("make", "Run make", ["make"]),
       this.createTask("package", "Create RPM Package", ["package"]),
@@ -19,30 +21,26 @@ export class SfdkTaskProvider implements vscode.TaskProvider {
     if (definition.type !== SfdkTaskProvider.type) {
       return undefined;
     }
-
     const command: string = definition.command;
     const args: string[] = definition.args ?? [];
-
-    return this.createTask(command, task.name, [command, ...args], definition);
+    return this.createTask(
+      command,
+      task.name,
+      [command, ...args],
+      undefined,
+      definition,
+    );
   }
 
   private createTask(
     command: string,
     label: string,
     args: string[],
-    definition?: vscode.TaskDefinition
+    group?: vscode.TaskGroup,
+    definition?: vscode.TaskDefinition,
   ): vscode.Task {
-    const taskDef = definition ?? {
-      type: SfdkTaskProvider.type,
-      command,
-    };
-
-    const configPath = vscode.workspace
-      .getConfiguration("sfdk")
-      .get<string>("path", "");
-    const sfdkBin = configPath || "sfdk";
-
-    const execution = new vscode.ShellExecution(sfdkBin, args);
+    const taskDef = definition ?? { type: SfdkTaskProvider.type, command };
+    const execution = new vscode.ShellExecution(this.sfdkPath, args);
 
     const task = new vscode.Task(
       taskDef,
@@ -50,12 +48,10 @@ export class SfdkTaskProvider implements vscode.TaskProvider {
       `sfdk: ${label}`,
       "sfdk",
       execution,
-      ["$gcc"]
+      ["$gcc"],
     );
 
-    task.group =
-      command === "build" ? vscode.TaskGroup.Build : undefined;
-
+    task.group = group;
     task.presentationOptions = {
       reveal: vscode.TaskRevealKind.Always,
       panel: vscode.TaskPanelKind.Shared,

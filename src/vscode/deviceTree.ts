@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
-import { Sfdk } from "./sfdk";
-import { SfdkDevice } from "./types";
+import type { SfdkClient, SfdkDevice } from "../core/types";
 
 export class DeviceTreeItem extends vscode.TreeItem {
   constructor(public readonly device: SfdkDevice) {
@@ -19,10 +18,13 @@ export class DeviceTreeItem extends vscode.TreeItem {
       `Key: ${device.privateKey}`,
     ].join("\n");
 
-    this.contextValue = "device";
+    this.contextValue = device.type === "emulator" ? "emulator" : "device";
     this.iconPath = new vscode.ThemeIcon(
-      device.type === "emulator" ? "vm" : "device-mobile"
+      device.type === "emulator" ? "vm" : "device-mobile",
     );
+    this.accessibilityInformation = {
+      label: `${device.name}, ${device.type === "emulator" ? "Emulator" : "Hardware device"}, ${device.connection}`,
+    };
   }
 }
 
@@ -30,13 +32,11 @@ export class DeviceTreeProvider
   implements vscode.TreeDataProvider<DeviceTreeItem>
 {
   private _onDidChangeTreeData = new vscode.EventEmitter<
-    DeviceTreeItem | undefined | void
+    DeviceTreeItem | undefined | undefined
   >();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
-  private devices: SfdkDevice[] = [];
-
-  constructor(private sfdk: Sfdk) {}
+  constructor(private client: SfdkClient) {}
 
   refresh(): void {
     this._onDidChangeTreeData.fire();
@@ -52,18 +52,11 @@ export class DeviceTreeProvider
     }
 
     try {
-      this.devices = await this.sfdk.listDevices();
-      if (this.devices.length === 0) {
-        return [];
-      }
-      return this.devices.map((d) => new DeviceTreeItem(d));
-    } catch {
-      vscode.window.showErrorMessage("Failed to list sfdk devices.");
+      const devices = await this.client.listDevices();
+      return devices.map((d) => new DeviceTreeItem(d));
+    } catch (err) {
+      console.warn("Failed to list devices:", err);
       return [];
     }
-  }
-
-  getDevices(): SfdkDevice[] {
-    return this.devices;
   }
 }

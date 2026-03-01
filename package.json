@@ -2,9 +2,13 @@
   "name": "sfdk-vscode",
   "displayName": "Sailfish OS SDK (sfdk)",
   "description": "Build, deploy, and manage Sailfish OS applications using the sfdk CLI tool",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "publisher": "erwanlpfr",
   "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/erwanlpfr/sfdk-vscode"
+  },
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -18,7 +22,6 @@
     "rpm",
     "qml"
   ],
-  "icon": "resources/sailfish.png",
   "activationEvents": [
     "workspaceContains:**/.sfdk/**",
     "workspaceContains:**/*.pro"
@@ -28,47 +31,94 @@
     "commands": [
       {
         "command": "sfdk.build",
-        "title": "SFDK: Build",
+        "title": "Build",
+        "category": "SFDK",
         "icon": "$(play)"
       },
       {
         "command": "sfdk.deploy",
-        "title": "SFDK: Deploy to Device",
+        "title": "Deploy to Device",
+        "category": "SFDK",
         "icon": "$(rocket)"
       },
       {
         "command": "sfdk.listDevices",
-        "title": "SFDK: Refresh Devices",
+        "title": "Refresh Devices",
+        "category": "SFDK",
         "icon": "$(refresh)"
       },
       {
         "command": "sfdk.setTarget",
-        "title": "SFDK: Set Build Target"
+        "title": "Set Build Target",
+        "category": "SFDK"
       },
       {
         "command": "sfdk.setDevice",
-        "title": "SFDK: Set Device"
+        "title": "Set Device",
+        "category": "SFDK"
       },
       {
         "command": "sfdk.check",
-        "title": "SFDK: Check RPM Quality"
+        "title": "Check RPM Quality",
+        "category": "SFDK"
       },
       {
         "command": "sfdk.qmake",
-        "title": "SFDK: Run qmake"
+        "title": "Run qmake",
+        "category": "SFDK"
       },
       {
         "command": "sfdk.make",
-        "title": "SFDK: Run make"
+        "title": "Run make",
+        "category": "SFDK"
       },
       {
         "command": "sfdk.package",
-        "title": "SFDK: Create RPM Package"
+        "title": "Create RPM Package",
+        "category": "SFDK"
       },
       {
         "command": "sfdk.refreshTargets",
-        "title": "SFDK: Refresh Build Targets",
+        "title": "Refresh Build Targets",
+        "category": "SFDK",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "sfdk.engineToggle",
+        "title": "Start/Stop Build Engine",
+        "category": "SFDK"
+      },
+      {
+        "command": "sfdk.engineStart",
+        "title": "Start Build Engine",
+        "category": "SFDK"
+      },
+      {
+        "command": "sfdk.engineStop",
+        "title": "Stop Build Engine",
+        "category": "SFDK"
+      },
+      {
+        "command": "sfdk.emulatorStart",
+        "title": "Start Emulator",
+        "category": "SFDK",
+        "icon": "$(play)"
+      },
+      {
+        "command": "sfdk.emulatorStop",
+        "title": "Stop Emulator",
+        "category": "SFDK",
+        "icon": "$(debug-stop)"
+      },
+      {
+        "command": "sfdk.qmlLiveToggle",
+        "title": "Toggle QML Live",
+        "category": "SFDK"
+      },
+      {
+        "command": "sfdk.qmlLiveRun",
+        "title": "Run with QML Live",
+        "category": "SFDK"
       }
     ],
     "viewsContainers": {
@@ -108,12 +158,22 @@
       "view/item/context": [
         {
           "command": "sfdk.deploy",
-          "when": "view == sfdk-devices && viewItem == device",
+          "when": "view == sfdk-devices && viewItem =~ /device|emulator/",
+          "group": "inline"
+        },
+        {
+          "command": "sfdk.emulatorStart",
+          "when": "view == sfdk-devices && viewItem == emulator",
+          "group": "inline"
+        },
+        {
+          "command": "sfdk.emulatorStop",
+          "when": "view == sfdk-devices && viewItem == emulator",
           "group": "inline"
         },
         {
           "command": "sfdk.setDevice",
-          "when": "view == sfdk-devices && viewItem == device"
+          "when": "view == sfdk-devices && viewItem =~ /device|emulator/"
         },
         {
           "command": "sfdk.setTarget",
@@ -152,6 +212,16 @@
           "type": "boolean",
           "default": true,
           "description": "Automatically run 'sfdk build' before deploying."
+        },
+        "sfdk.qmlLive.appBinary": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the app binary on the device (e.g. /usr/bin/harbour-myapp). Required for QML Live."
+        },
+        "sfdk.qmlLive.workspacePath": {
+          "type": "string",
+          "default": "",
+          "description": "Restrict QML Live to this subdirectory (e.g. qml). Leave empty for the full project."
         }
       }
     },
@@ -181,9 +251,13 @@
     "vscode:prepublish": "bun run package",
     "compile": "bun build src/extension.ts --outdir=dist --target=node --format=cjs --external=vscode",
     "watch": "bun build src/extension.ts --outdir=dist --target=node --format=cjs --external=vscode --watch",
-    "package": "bun build src/extension.ts --outdir=dist --target=node --format=cjs --external=vscode --minify"
+    "package": "bun build src/extension.ts --outdir=dist --target=node --format=cjs --external=vscode --minify",
+    "test": "bun test src/test/",
+    "lint": "bunx biome check src/",
+    "lint:fix": "bunx biome check --write src/"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.4.4",
     "@types/node": "^20.0.0",
     "@types/vscode": "^1.85.0",
     "typescript": "^5.4.0"
