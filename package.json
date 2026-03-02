@@ -2,7 +2,7 @@
   "name": "sfdk-vscode",
   "displayName": "Sailfish OS SDK (sfdk)",
   "description": "Build, deploy, and manage Sailfish OS applications using the sfdk CLI tool",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "publisher": "erwanlpfr",
   "license": "GPL-3.0",
   "repository": {

@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.0]
+
+### Changed
+- First stable release
+- Version bump to 1.0.0
+
 ## [0.3.0]
 
 ### Added
