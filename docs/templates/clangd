@@ -1,0 +1,82 @@
+# Sailfish OS — clangd configuration
+#
+# Copy this file to .clangd at your project root, then replace:
+#   <SYSROOT>  → full path to your SDK target sysroot, e.g.
+#                ~/SailfishOS/mersdk/targets/SailfishOS-5.0.0.62-aarch64.default
+#   <TRIPLE>   → GCC target triple for your architecture:
+#                aarch64  → aarch64-meego-linux-gnu
+#                armv7hl  → armv7hl-meego-linux-gnueabi
+#                i486     → i486-meego-linux-gnu
+#   <GCC_VER>  → GCC version found in <SYSROOT>/opt/cross/<TRIPLE>/include/c++/
+#                e.g. 10.3.1
+#
+# Add -isystem lines for each Qt module your project uses.
+# List available modules with: ls <SYSROOT>/usr/include/qt5/
+
+CompileFlags:
+  Add:
+    - -xc++
+    - -std=c++14
+    - --target=<TRIPLE>
+    - --sysroot=<SYSROOT>
+    - -ferror-limit=0
+    - -Wno-everything
+    # GCC C++ standard library
+    - -isystem
+    - <SYSROOT>/opt/cross/<TRIPLE>/include/c++/<GCC_VER>
+    - -isystem
+    - <SYSROOT>/opt/cross/<TRIPLE>/include/c++/<GCC_VER>/<TRIPLE>
+    # Qt 5 headers
+    - -isystem
+    - <SYSROOT>/usr/include/qt5
+    - -isystem
+    - <SYSROOT>/usr/include/qt5/QtCore
+    - -isystem
+    - <SYSROOT>/usr/include/qt5/QtGui
+    - -isystem
+    - <SYSROOT>/usr/include/qt5/QtQml
+    - -isystem
+    - <SYSROOT>/usr/include/qt5/QtQuick
+    - -isystem
+    - <SYSROOT>/usr/include/qt5/QtNetwork
+    - -isystem
+    - <SYSROOT>/usr/include/qt5/QtSql
+    - -isystem
+    - <SYSROOT>/usr/include/qt5/QtMultimedia
+    - -isystem
+    - <SYSROOT>/usr/include/qt5/QtDBus
+    - -isystem
+    - <SYSROOT>/usr/include/qt5/QtConcurrent
+    - -isystem
+    - <SYSROOT>/usr/include/qt5/QtSvg
+    - -isystem
+    - <SYSROOT>/usr/include/qt5/QtXml
+    - -isystem
+    - <SYSROOT>/usr/include/qt5/QtWidgets
+    # Sailfish headers
+    - -isystem
+    - <SYSROOT>/usr/include/sailfishapp
+    # Qt module defines
+    - -DQT_CORE_LIB
+    - -DQT_GUI_LIB
+    - -DQT_QML_LIB
+    - -DQT_QUICK_LIB
+    - -DQT_NETWORK_LIB
+    - -DQT_SQL_LIB
+    - -DQT_CONCURRENT_LIB
+    - -DQT_DBUS_LIB
+    - -DQT_SVG_LIB
+    - -DQT_XML_LIB
+    - -DQT_WIDGETS_LIB
+    - -DQT_MULTIMEDIA_LIB
+  Remove:
+    - -m*
+
+# Suppress Qt 5 vs modern clang incompatibilities
+Diagnostics:
+  Suppress:
+    - expr_not_cce
+    - typecheck_invalid_operands
+    - typecheck_nonviable_condition
+    - ovl_no_viable_function_in_init
+    - err_ovl_no_viable_conversion_in_cast

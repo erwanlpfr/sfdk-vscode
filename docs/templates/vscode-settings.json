@@ -1,0 +1,24 @@
+{
+    "files.associations": {
+        "*.qml": "qml",
+        "*.js": "javascript",
+        "*.pri": "qmake",
+        "*.pro": "qmake",
+        "*.ts": "xml",
+        "*.spec": "rpm-spec"
+    },
+    "files.exclude": {
+        "**/*.o": true,
+        "**/moc_*.cpp": true,
+        "**/qrc_*.cpp": true,
+        "Makefile": true,
+        "documentation.list": true,
+        ".qmake.stash": true
+    },
+    "search.exclude": {
+        "**/*.o": true,
+        "**/moc_*.cpp": true,
+        "**/qrc_*.cpp": true,
+        "RPMS/**": true
+    }
+}

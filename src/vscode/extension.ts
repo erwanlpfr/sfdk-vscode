@@ -2,7 +2,6 @@ import * as vscode from "vscode";
 import { SfdkClientImpl } from "../core/client";
 import { registerAllCommands } from "./commandAdapter";
 import { DeviceTreeProvider } from "./deviceTree";
-import { registerInitCommand } from "./initProject";
 import { StatusBar } from "./statusBar";
 import { TargetTreeProvider } from "./targetTree";
 import { SfdkTaskProvider } from "./taskProvider";
@@ -77,9 +76,6 @@ export async function activate(
     SfdkTaskProvider.type,
     new SfdkTaskProvider(sfdkPath),
   );
-
-  // Register init command (file generation, not sfdk CLI)
-  registerInitCommand(context, client);
 
   // Register all commands via adapter
   registerAllCommands(context, {

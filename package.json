@@ -30,12 +30,6 @@
   "contributes": {
     "commands": [
       {
-        "command": "sfdk.init",
-        "title": "Initialize Project",
-        "category": "SFDK",
-        "icon": "$(wand)"
-      },
-      {
         "command": "sfdk.build",
         "title": "Build",
         "category": "SFDK",
@@ -266,7 +260,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.4.5",
     "@types/bun": "1.3.9",
-    "@types/vscode": "1.109.0",
+    "@types/vscode": "1.85.0",
     "typescript": "5.9.3"
   }
 }

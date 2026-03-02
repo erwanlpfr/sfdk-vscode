@@ -15,7 +15,6 @@ Build, deploy, and manage [Sailfish OS](https://sailfishos.org/) applications di
 - **Build Engine Control** — Start, stop, and monitor the build engine from the status bar
 - **Emulator Control** — Start and stop emulators from the device tree context menu
 - **RPM Packaging** — Create RPM packages and run quality checks
-- **Project Init** — Generate `.clangd` and `.vscode/settings.json` for C++ IntelliSense
 - **QML Live** — Toggle QML Live mode and run apps with live-reload on device
 - **Task Integration** — Use sfdk commands as VS Code tasks in `tasks.json`
 - **Terminal Output** — All command output streams to a dedicated "Sailfish SDK" terminal
@@ -90,18 +89,24 @@ Open the Command Palette (`Ctrl+Shift+P`) and type `SFDK` to see all available c
 | `SFDK: Start/Stop Build Engine` | Toggle the build engine |
 | `SFDK: Start Emulator` | Start an emulator |
 | `SFDK: Stop Emulator` | Stop an emulator |
-| `SFDK: Initialize Project` | Generate `.clangd` and `.vscode/settings.json` |
 | `SFDK: Toggle QML Live` | Enable/disable QML Live mode |
 | `SFDK: Run with QML Live` | Launch app on device with QML Live |
 
-### Initialize Project
+### C++ IntelliSense
 
-Run `SFDK: Initialize Project` from the Command Palette to generate editor configuration for C++ IntelliSense in your Sailfish OS project:
+Template files for clangd and VS Code settings are provided in [`docs/templates/`](docs/templates/):
 
-- **`.clangd`** — clangd compile flags targeting the active build target's sysroot, with GCC and Qt 5 include paths auto-discovered
-- **`.vscode/settings.json`** — file associations (`.qml`, `.pro`, `.spec`) and exclusions for generated files (`moc_*.cpp`, `*.o`)
+1. Copy `docs/templates/clangd` to `.clangd` at your project root
+2. Copy `docs/templates/vscode-settings.json` to `.vscode/settings.json`
+3. Edit `.clangd` — replace `<SYSROOT>`, `<TRIPLE>`, and `<GCC_VER>` with your SDK target paths
 
-The command reads the active build target from `.sfdk/target` (or prompts you to pick one) and scans the SDK sysroot at `~/SailfishOS/mersdk/targets/`.
+The template comments list the values for each supported architecture (aarch64, armv7hl, i486). Your sysroot is at `~/SailfishOS/mersdk/targets/<target-name>.default`.
+
+> **Note:** Add `.clangd` to your `.gitignore` — it contains machine-specific absolute paths.
+
+### QML Language Server
+
+Qt 6's `qmlls` is the only QML language server available. It is **incompatible with Sailfish OS (Qt 5.6)**: the SDK sysroot doesn't ship native plugin binaries, causing cascading import failures for Sailfish.Silica and other modules. Standard QtQuick types work but Sailfish-specific types produce false positives. No alternative QML LSP exists.
 
 ### QML Live
 
@@ -155,7 +160,6 @@ src/
 │   ├── client.ts          # sfdk CLI process wrapper
 │   ├── constants.ts       # Shared constants
 │   ├── parsers.ts         # Output parsers for device/target lists
-│   ├── templates.ts       # .clangd and .vscode/settings.json generators
 │   └── commands/          # Command implementations
 ├── vscode/                # VS Code integration layer
 │   ├── extension.ts       # Activation & setup
@@ -163,9 +167,12 @@ src/
 │   ├── deviceTree.ts      # Device tree view provider
 │   ├── targetTree.ts      # Target tree view provider
 │   ├── statusBar.ts       # Status bar items
-│   ├── taskProvider.ts    # Task provider
-│   └── initProject.ts    # Initialize Project command
-└── test/                  # Unit tests
+│   └── taskProvider.ts    # Task provider
+├── test/                  # Unit tests
+docs/
+└── templates/             # Editor configuration templates
+    ├── clangd             # .clangd template for C++ IntelliSense
+    └── vscode-settings.json
 ```
 
 The `core/` layer has zero VS Code dependencies, making it easy to test and reuse.
