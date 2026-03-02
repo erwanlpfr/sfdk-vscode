@@ -263,9 +263,9 @@
     "lint:fix": "bunx biome check --write src/"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.4",
-    "@types/node": "^20.0.0",
-    "@types/vscode": "^1.85.0",
-    "typescript": "^5.4.0"
+    "@biomejs/biome": "^2.4.5",
+    "@types/node": "^25.3.3",
+    "@types/vscode": "^1.109.0",
+    "typescript": "^5.9.3"
   }
 }

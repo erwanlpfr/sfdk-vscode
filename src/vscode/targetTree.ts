@@ -28,7 +28,7 @@ export class TargetTreeProvider
   constructor(private client: SfdkClient) {}
 
   refresh(): void {
-    this._onDidChangeTreeData.fire();
+    this._onDidChangeTreeData.fire(undefined);
   }
 
   getTreeItem(element: TargetTreeItem): vscode.TreeItem {

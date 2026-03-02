@@ -41,7 +41,7 @@ export class DeviceTreeProvider
   constructor(private client: SfdkClient) {}
 
   refresh(): void {
-    this._onDidChangeTreeData.fire();
+    this._onDidChangeTreeData.fire(undefined);
   }
 
   getTreeItem(element: DeviceTreeItem): vscode.TreeItem {
