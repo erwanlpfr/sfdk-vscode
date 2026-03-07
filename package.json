@@ -213,6 +213,11 @@
           "default": true,
           "description": "Automatically run 'sfdk build' before deploying."
         },
+        "sfdk.autoDeployAfterBuild": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically deploy to a device after a successful build."
+        },
         "sfdk.qmlLive.appBinary": {
           "type": "string",
           "default": "",

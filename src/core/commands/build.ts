@@ -28,15 +28,45 @@ function createRunCommand(
   };
 }
 
-export const buildCommand = createRunCommand(
-  "sfdk.build",
-  "SFDK: Build",
-  "Building...",
-  ["build"],
-  "Build succeeded",
-  "Build failed",
-  { cancellable: true },
-);
+export const buildCommand: SfdkCommand = {
+  id: "sfdk.build",
+  title: "SFDK: Build",
+  progressTitle: "Building...",
+  cancellable: true,
+  async execute({ client, pickDevice, getConfig }) {
+    const buildResult = await client.run(["build"]);
+    if (buildResult.exitCode !== 0) {
+      return {
+        success: false,
+        message: `Build failed (exit code ${buildResult.exitCode})`,
+      };
+    }
+
+    const autoDeploy = getConfig("autoDeployAfterBuild", false);
+    if (!autoDeploy) {
+      return { success: true, message: "Build succeeded" };
+    }
+
+    const deviceName = await pickDevice();
+    if (!deviceName) {
+      return { success: true, message: "Build succeeded (deploy skipped — no device selected)" };
+    }
+
+    await client.setConfig("device", deviceName);
+
+    const deployMethod = getConfig("deployMethod", "--sdk");
+    const deployResult = await client.run(["deploy", deployMethod]);
+
+    return {
+      success: deployResult.exitCode === 0,
+      message:
+        deployResult.exitCode === 0
+          ? `Built and deployed to ${deviceName}`
+          : `Build succeeded but deploy failed (exit code ${deployResult.exitCode})`,
+      refresh: ["statusBar"] as const,
+    };
+  },
+};
 
 export const qmakeCommand = createRunCommand(
   "sfdk.qmake",
